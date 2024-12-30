@@ -1,0 +1,1 @@
+export const messagesEndpoint = '/api/v1/messages'

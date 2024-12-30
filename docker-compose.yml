@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  client:
+    container_name: client
+    build:
+      context: ./apps/client
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./apps/client:/app
+      - /app/node_modules
+
+  backend:
+    container_name: api
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - MONGO_URL=mongodb://mongodb:27017
+    volumes:
+      - ./apps/api:/app
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    volumes:
+      - mongodb-data:/data/db
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+
+volumes:
+  mongodb-data:
